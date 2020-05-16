@@ -2,6 +2,7 @@
 from splinter import Browser
 from bs4 import BeautifulSoup
 import pandas as pd
+import datetime as dt
 
 def scrape_all():
     # Initiate headless driver for deployment
@@ -16,7 +17,11 @@ def scrape_all():
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
         "last_modified": dt.datetime.now()
-        }
+    }
+    
+    browser.quit()
+    
+    return data
 
 def mars_news(browser):
     # Visit the mars nasa news site
@@ -37,11 +42,10 @@ def mars_news(browser):
 
         # Use the parent element to find the first 'a' tag and save it as 'news_title'
         news_title = slide_elem.find("div", class_='content_title').get_text()
-        news_title
 
         # Use the parent element to find the paragraph text
         news_p = slide_elem.find('div', class_="article_teaser_body").get_text()
-        news_p
+        
     except AttributeError:
         return None, None
 
@@ -68,11 +72,9 @@ def featured_image(browser):
     try:
         # Find the relative image url
         img_url_rel = img_soup.select_one('figure.lede a img').get("src")
-        img_url_rel
 
         # Use the base URL to create an absolute URL
         img_url = f'https://www.jpl.nasa.gov{img_url_rel}'
-        img_url
     
     except AttributeError:
         return None
@@ -98,5 +100,3 @@ def mars_facts():
 if __name__ == "__main__":
     # If running as script, print scraped data
     print(scrape_all())
-
-#browser.quit()
